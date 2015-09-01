@@ -12,18 +12,15 @@ public class MainActivity extends Activity {
     private Toolbar toolbar;
 
     private String[] imageURLArray = {
-            "http://farm8.staticflickr.com/7315/9046944633_881f24c4fa.jpg",
-            "http://farm3.staticflickr.com/2828/9046946983_923887b17d.jpg",
-            "http://farm4.staticflickr.com/3810/9046947167_3a51fffa0b.jpg",
-            "http://farm4.staticflickr.com/3773/9049175264_b0ea30fa75_s.jpg",
-            "http://farm4.staticflickr.com/3781/9046945893_f27db35c7e_s.jpg",
-            "http://farm6.staticflickr.com/5344/9049177018_4621cb63db_s.jpg",
-            "http://farm8.staticflickr.com/7307/9046947621_67e0394f7b_s.jpg",
-            "http://farm6.staticflickr.com/5457/9046948185_3be564ac10_s.jpg",
-            "http://farm4.staticflickr.com/3752/9046946459_a41fbfe614_s.jpg",
-            "http://farm8.staticflickr.com/7403/9046946715_85f13b91e5_s.jpg",
-            "http://farm4.staticflickr.com/3777/9049174610_bf51be8a07_s.jpg",
-            "http://farm8.staticflickr.com/7324/9046946887_d96a28376c_s.jpg"
+            //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[size_suffixe_letter].jpg
+            "https://farm8.staticflickr.com/7628/17019645167_ba75287b72_q.jpg",
+            "https://farm8.staticflickr.com/7613/17226551151_6ba61a0613_q.jpg",
+            "https://farm8.staticflickr.com/7673/16606923443_dda3031f01_q.jpg",
+            "https://farm9.staticflickr.com/8777/17019663617_9c12658bc1_q.jpg",
+            "https://farm8.staticflickr.com/7701/17019727837_b2660e74f1_q.jpg",
+            "https://farm8.staticflickr.com/7587/17039372438_81d67ef664_q.jpg",
+            "https://farm9.staticflickr.com/8752/17039387838_3828eaa227_q.jpg",
+            "https://farm9.staticflickr.com/8791/17201159096_9d707c1544_q.jpg",
     };
 
     @Override
