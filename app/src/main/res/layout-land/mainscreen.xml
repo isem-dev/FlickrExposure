@@ -8,6 +8,19 @@
 
     <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
 
+    <ProgressBar
+        style="@android:style/Widget.ProgressBar.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressText"
+        android:layout_gravity="center"/>
+
     <ListView
         android:id="@+id/listViewMain"
         android:layout_width="match_parent"

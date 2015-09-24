@@ -9,50 +9,51 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.net.URL;
+import java.util.List;
 
 public class ImageAdapter extends ArrayAdapter<String> {
 
-    private String[] imageURLArray;
     private LayoutInflater layoutInflater;
+    private List<String> imageURLArray;
+    private List<String> imageTitlesArray;
 
-    public ImageAdapter(Context context, int textViewResourceId, String[] imagesArray) {
-        super(context, textViewResourceId, imagesArray);
+    public ImageAdapter(Context context, int viewResourceId, List<String> imagesArray, List<String> titlesArray) {
+        super(context, viewResourceId, titlesArray);
 
-//        layoutInflater = ((Activity)context).getLayoutInflater();
         layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageURLArray = imagesArray;
+        imageTitlesArray = titlesArray;
     }
 
     private static class ViewHolder {
         String imageURL;
         Bitmap bitmap;
         ImageView imageView;
+        TextView titleTextView;
+
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
 
         if(convertView == null) {
             convertView = layoutInflater.inflate(R.layout.imageitem, null);
 
             viewHolder = new ViewHolder();
             viewHolder.imageView = (ImageView) convertView.findViewById(R.id.itemImageView);
+            viewHolder.titleTextView = (TextView) convertView.findViewById(R.id.itemTexView);
             convertView.setTag(viewHolder);
         }
 
         viewHolder = (ViewHolder) convertView.getTag();
 
-        // Image loading directly from resource
-//        BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inSampleSize = 4;
-//        Bitmap imageBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.flickr_button_logo_vector, options);
-//        viewHolder.imageView.setImageBitmap(imageBitmap);
-
-        // Image loading using an AsyncTask via URL
-        viewHolder.imageURL = imageURLArray[position];
+        // Image and title loading using AsyncTask via URL
+        viewHolder.imageURL = imageURLArray.get(position);
+        viewHolder.titleTextView.setText(imageTitlesArray.get(position));
         new DownloadAsyncTask().execute(viewHolder);
 
         return convertView;
@@ -64,7 +65,7 @@ public class ImageAdapter extends ArrayAdapter<String> {
         @Override
         protected ViewHolder doInBackground(ViewHolder... params) {
             ViewHolder viewHolder = params[0];
-            URL imageURL = null;
+            URL imageURL;
             try {
                 imageURL = new URL(viewHolder.imageURL);
                 viewHolder.bitmap = BitmapFactory.decodeStream(imageURL.openStream());
