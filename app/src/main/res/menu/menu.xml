@@ -4,6 +4,6 @@
         android:title="@string/settings_title"
         android:orderInCategory="2" />
     <item android:id="@+id/download"
-        android:title="Load / Refresh"
+        android:title="@string/download_title"
         android:orderInCategory="1" />
 </menu>

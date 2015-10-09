@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.net.URL;
 import java.util.List;
 
 public class ImageAdapter extends ArrayAdapter<String> {
+
+    private final String LOG_TAG = this.getClass().getName();
 
     private LayoutInflater layoutInflater;
     private List<String> imageURLArray;
@@ -33,7 +36,6 @@ public class ImageAdapter extends ArrayAdapter<String> {
         Bitmap bitmap;
         ImageView imageView;
         TextView titleTextView;
-
     }
 
     @Override
@@ -70,7 +72,7 @@ public class ImageAdapter extends ArrayAdapter<String> {
                 imageURL = new URL(viewHolder.imageURL);
                 viewHolder.bitmap = BitmapFactory.decodeStream(imageURL.openStream());
             } catch (java.io.IOException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, e.getMessage(), e);
             }
 
             return viewHolder;

@@ -2,4 +2,9 @@
 <resources>
     <string name="app_name">Flickr Exposure Beta</string>
     <string name="settings_title">Settings</string>
+    <string name="download_title">Load / Refresh</string>
+    <string name="connection">Connection...</string>
+    <string name="settings_clicked">Settings clicked</string>
+    <string name="download_clicked">Downloading</string>
+    <string name="connected">Connected</string>
 </resources>

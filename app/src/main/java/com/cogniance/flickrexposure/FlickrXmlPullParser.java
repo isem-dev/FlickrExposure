@@ -1,5 +1,7 @@
 package com.cogniance.flickrexposure;
 
+import android.util.Log;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlickrXmlPullParser {
+
+    private final String LOG_TAG = this.getClass().getName();
 
     private List<String> imageTitlesArray = new ArrayList<>();
 
@@ -26,7 +30,7 @@ public class FlickrXmlPullParser {
     public List<String> parse(String xmlString) {
 
         XmlPullParserFactory factory;
-        XmlPullParser xmlPullParser;
+        XmlPullParser parser;
 
         List<String> imageURLArray = new ArrayList<>();
         String idAttributeValue;
@@ -40,22 +44,23 @@ public class FlickrXmlPullParser {
 
         try {
             factory = XmlPullParserFactory.newInstance();
-            xmlPullParser = factory.newPullParser();
+            factory.setNamespaceAware(true);
+            parser = factory.newPullParser();
 
-
-            xmlPullParser.setInput(new StringReader(xmlString));
+            parser.setInput(new StringReader(xmlString));
 
             int i = 0;
-            while (xmlPullParser.getEventType() != XmlPullParser.END_DOCUMENT) {
-                if (xmlPullParser.getEventType() == XmlPullParser.START_TAG && xmlPullParser.getName().equals("photo")) {
-                    idAttributeValue = xmlPullParser.getAttributeValue(0);
-                    secretAttributValue = xmlPullParser.getAttributeValue(2);
-                    serverAttributValue = xmlPullParser.getAttributeValue(3);
-                    farmAttributValue = xmlPullParser.getAttributeValue(4);
-                    titleAttributValue = xmlPullParser.getAttributeValue(5);
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+                if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("photo")) {
+                    parser.getNamespace();
+                    idAttributeValue = parser.getAttributeValue("", "id");
+                    secretAttributValue = parser.getAttributeValue("", "secret");
+                    serverAttributValue = parser.getAttributeValue("", "server");
+                    farmAttributValue = parser.getAttributeValue("", "farm");
+                    titleAttributValue = parser.getAttributeValue("", "title");
 
-                    dateUploadAttributValue = xmlPullParser.getAttributeValue(9);
-                    ownerNameAttributValue = xmlPullParser.getAttributeValue(10);
+                    dateUploadAttributValue = parser.getAttributeValue("", "dateupload");
+                    ownerNameAttributValue = parser.getAttributeValue("", "ownername");
 
                     //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[size_suffixe_letter].jpg
                     imageURLArray.add("https://farm" + farmAttributValue + ".staticflickr.com/" + serverAttributValue + "/" + idAttributeValue + "_" + secretAttributValue + "_q.jpg");
@@ -66,10 +71,10 @@ public class FlickrXmlPullParser {
                     imageExtrasAttributesArray.add(i + 1, ownerNameAttributValue); //even index
                     i += 2;
                 }
-                xmlPullParser.next();
+                parser.next();
             }
         } catch (XmlPullParserException | IOException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.getMessage(), e);
         }
 
         return imageURLArray;
