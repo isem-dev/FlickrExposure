@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 //        outState.putStringArrayList("imagesArrayState", (ArrayList<String>) imagesArray);
 //        outState.putStringArrayList("titlesArrayState", (ArrayList<String>) titlesArray);
 
-        outState.putParcelable("listViewState", listView.onSaveInstanceState());
+//        outState.putParcelable("listViewState", listView.onSaveInstanceState());
 
         Log.d(LOG_TAG, "onSaveInstanceState");
     }
