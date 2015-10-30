@@ -37,35 +37,32 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainscreen);
-        Log.d(LOG_TAG, "onCreate");
 
         initToolbar();
 
-        if (savedInstanceState != null) {
-//            imagesArray = savedInstanceState.getStringArrayList("imagesArrayState");
-//            titlesArray = savedInstanceState.getStringArrayList("titlesArrayState");
-
-            listInstanceState = savedInstanceState.getParcelable("listViewState");
-            listView.onRestoreInstanceState(listInstanceState); //java.lang.NullPointerException
-
-        } else {
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            progressText = (TextView) findViewById(R.id.progressText);
-            progressText.setText(R.string.connection);
-
+//        if (savedInstanceState != null) {
+////            imagesArray = savedInstanceState.getStringArrayList("imagesArrayState");
+////            titlesArray = savedInstanceState.getStringArrayList("titlesArrayState");
+//
+//            listInstanceState = savedInstanceState.getParcelable("listViewState");
+//            listView.onRestoreInstanceState(listInstanceState); //java.lang.NullPointerException
+//
+//        } else {
+            initProgressBar();
             downloadContentTask = (DownloadContentTask) new DownloadContentTask(this, progressBar, progressText).execute(FlickrUser.getFlickrURL());//Separated thread for connection establishment and content downloading
-        }
+//        }
+
+        Log.d(LOG_TAG, "onCreate");
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-
+        super.onSaveInstanceState(outState);
 //        outState.putStringArrayList("imagesArrayState", (ArrayList<String>) imagesArray);
 //        outState.putStringArrayList("titlesArrayState", (ArrayList<String>) titlesArray);
 
         outState.putParcelable("listViewState", listView.onSaveInstanceState());
 
-        super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState");
     }
 
@@ -95,10 +92,6 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
 
-        if (downloadContentTask.getStatus() == AsyncTask.Status.FINISHED) {
-            downloadContentTask.cancel(true);
-        }
-
         Log.d(LOG_TAG, "onPause");
     }
 
@@ -106,7 +99,9 @@ public class MainActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        downloadContentTask.cancel(true);
+        if (downloadContentTask.getStatus() == AsyncTask.Status.FINISHED) {
+            downloadContentTask.cancel(true);
+        }
 
         Log.d(LOG_TAG, "onStop");
     }
@@ -114,6 +109,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (downloadContentTask.getStatus() == AsyncTask.Status.RUNNING) {
+            downloadContentTask.cancel(true);
+        }
+
         Log.d(LOG_TAG, "onDestroy");
     }
 
@@ -141,7 +141,14 @@ public class MainActivity extends Activity {
             }
         });
         toolbar.inflateMenu(R.menu.menu);
+
         Log.d(LOG_TAG, "initToolbar");
+    }
+
+    private void initProgressBar() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressText = (TextView) findViewById(R.id.progressText);
+        progressText.setText(R.string.connection);
     }
 
     protected void initListView() {
@@ -156,6 +163,7 @@ public class MainActivity extends Activity {
                 Log.d(LOG_TAG, "item is selected: position = " + position + ", id = " + id);
             }
         });
+
         Log.d(LOG_TAG, "initListView");
     }
 
