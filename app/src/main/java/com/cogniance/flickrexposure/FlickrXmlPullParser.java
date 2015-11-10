@@ -64,9 +64,9 @@ public class FlickrXmlPullParser {
 
                     //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[size_suffixe_letter].jpg
                     imageURLArray.add("https://farm" + farmAttributValue + ".staticflickr.com/" + serverAttributValue + "/" + idAttributeValue + "_" + secretAttributValue + "_q.jpg");
-                    
+
                     imageTitlesArray.add(titleAttributValue);
-                    
+
                     imageExtrasAttributesArray.add(i, dateUploadAttributValue); //odd index
                     imageExtrasAttributesArray.add(i + 1, ownerNameAttributValue); //even index
                     i += 2;

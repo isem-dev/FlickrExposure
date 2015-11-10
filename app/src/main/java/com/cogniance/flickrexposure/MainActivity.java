@@ -1,9 +1,9 @@
 package com.cogniance.flickrexposure;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,7 +27,6 @@ public class MainActivity extends Activity {
     private List<String> imagesArray;
     private List<String> titlesArray;
 
-    private Parcelable listInstanceState;
     private ListView listView;
     private ImageAdapter imageAdapter;
 
@@ -39,41 +38,30 @@ public class MainActivity extends Activity {
         setContentView(R.layout.mainscreen);
 
         initToolbar();
+        initProgressBar();
 
-//        if (savedInstanceState != null) {
-////            imagesArray = savedInstanceState.getStringArrayList("imagesArrayState");
-////            titlesArray = savedInstanceState.getStringArrayList("titlesArrayState");
-//
-//            listInstanceState = savedInstanceState.getParcelable("listViewState");
-//            listView.onRestoreInstanceState(listInstanceState); //java.lang.NullPointerException
-//
-//        } else {
-            initProgressBar();
-            downloadContentTask = (DownloadContentTask) new DownloadContentTask(this, progressBar, progressText).execute(FlickrUser.getFlickrURL());//Separated thread for connection establishment and content downloading
-//        }
+        //Separated thread for connection establishment and content downloading
+        downloadContentTask = (DownloadContentTask) new DownloadContentTask(this, progressBar, progressText).execute(FlickrUser.flickrURL);
 
         Log.d(LOG_TAG, "onCreate");
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-//        outState.putStringArrayList("imagesArrayState", (ArrayList<String>) imagesArray);
-//        outState.putStringArrayList("titlesArrayState", (ArrayList<String>) titlesArray);
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
-//        outState.putParcelable("listViewState", listView.onSaveInstanceState());
-
-        Log.d(LOG_TAG, "onSaveInstanceState");
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-//        imagesArray = savedInstanceState.getStringArrayList("imagesArrayState");
-//        titlesArray = savedInstanceState.getStringArrayList("titlesArrayState");
-
-        Log.d(LOG_TAG, "onRestoreInstanceState");
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState");
     }
 
     @Override
@@ -101,6 +89,7 @@ public class MainActivity extends Activity {
 
         if (downloadContentTask.getStatus() == AsyncTask.Status.FINISHED) {
             downloadContentTask.cancel(true);
+            Log.d(LOG_TAG, "downloadContentTask canceled via onStop");
         }
 
         Log.d(LOG_TAG, "onStop");
@@ -112,6 +101,7 @@ public class MainActivity extends Activity {
 
         if (downloadContentTask.getStatus() == AsyncTask.Status.RUNNING) {
             downloadContentTask.cancel(true);
+            Log.d(LOG_TAG, "downloadContentTask canceled via onDestroy");
         }
 
         Log.d(LOG_TAG, "onDestroy");
