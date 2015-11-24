@@ -1,6 +1,7 @@
 package com.cogniance.flickrexposure;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private final String LOG_TAG = this.getClass().getName();
+
+    protected final static String IMAGE_URL = "com.cogniance.flickrexposure.IMAGE_URL";
 
     private Toolbar toolbar;
 
@@ -46,16 +49,17 @@ public class MainActivity extends Activity {
         Log.d(LOG_TAG, "onCreate");
     }
 
+    //Handling the configuration change yourself
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-        }
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+//            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
@@ -79,32 +83,29 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-
         Log.d(LOG_TAG, "onPause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "onStop");
 
         if (downloadContentTask.getStatus() == AsyncTask.Status.FINISHED) {
             downloadContentTask.cancel(true);
             Log.d(LOG_TAG, "downloadContentTask canceled via onStop");
         }
-
-        Log.d(LOG_TAG, "onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy");
 
         if (downloadContentTask.getStatus() == AsyncTask.Status.RUNNING) {
             downloadContentTask.cancel(true);
             Log.d(LOG_TAG, "downloadContentTask canceled via onDestroy");
         }
-
-        Log.d(LOG_TAG, "onDestroy");
     }
 
     @Override
@@ -147,14 +148,24 @@ public class MainActivity extends Activity {
         titlesArray = downloadContentTask.getImageTitlesArray();
         imageAdapter = new ImageAdapter(getApplicationContext(), R.layout.imageitem, imagesArray, titlesArray);
         listView.setAdapter(imageAdapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(LOG_TAG, "item is selected: position = " + position + ", id = " + id);
+
+                startDisplayImageActivity(position);
             }
         });
 
         Log.d(LOG_TAG, "initListView");
+    }
+
+    private void startDisplayImageActivity(int position) {
+        Intent intent = new Intent(this, DisplayImageActivity.class);
+        String imageURL = imagesArray.get(position);
+        intent.putExtra(IMAGE_URL, imageURL);
+        startActivity(intent);
     }
 
 }

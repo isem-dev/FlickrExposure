@@ -7,4 +7,8 @@
     <string name="settings_clicked">Settings clicked</string>
     <string name="download_clicked">Downloading</string>
     <string name="connected">Connected</string>
+    <string name="title_activity_display_image">DisplayImageActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

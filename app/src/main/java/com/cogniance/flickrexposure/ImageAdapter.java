@@ -5,13 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.net.URL;
 import java.util.List;
 
@@ -23,12 +23,25 @@ public class ImageAdapter extends ArrayAdapter<String> {
     private List<String> imageURLArray;
     private List<String> imageTitlesArray;
 
+    private LruCache<String, Bitmap> bitmapLruCache;
+    private final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024); //kilobytes
+    private final int cashSize = maxMemory / 18; // Use 1/8th of the available memory
+
     public ImageAdapter(Context context, int viewResourceId, List<String> imagesArray, List<String> titlesArray) {
         super(context, viewResourceId, titlesArray);
 
         layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageURLArray = imagesArray;
         imageTitlesArray = titlesArray;
+
+        //Initialize memory cache
+        bitmapLruCache = new LruCache<String, Bitmap>(cashSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size is measured in kilobytes
+                return bitmap.getByteCount() / 1024;
+            }
+        };
     }
 
     private static class ViewHolder {
@@ -56,23 +69,28 @@ public class ImageAdapter extends ArrayAdapter<String> {
         // Image and title loading using AsyncTask via URL
         viewHolder.imageURL = imageURLArray.get(position);
         viewHolder.titleTextView.setText(imageTitlesArray.get(position));
-        new DownloadAsyncTask().execute(viewHolder);
+        new DownloadAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, viewHolder);
 
         return convertView;
     }
 
-    private class DownloadAsyncTask extends AsyncTask<ViewHolder, Void, ViewHolder> {
+    protected class DownloadAsyncTask extends AsyncTask<ViewHolder, Void, ViewHolder> {
 
         // Decode image in background
         @Override
         protected ViewHolder doInBackground(ViewHolder... params) {
             ViewHolder viewHolder = params[0];
-            URL imageURL;
-            try {
-                imageURL = new URL(viewHolder.imageURL);
-                viewHolder.bitmap = BitmapFactory.decodeStream(imageURL.openStream());
-            } catch (java.io.IOException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
+            viewHolder.bitmap = getBitmapFromMemCache(viewHolder.imageURL);
+
+            if (viewHolder.bitmap == null) {
+                URL imageURL;
+                try {
+                    imageURL = new URL(viewHolder.imageURL);
+                    viewHolder.bitmap = BitmapFactory.decodeStream(imageURL.openStream());
+                    addBitmapToMemoryCache(viewHolder.imageURL, viewHolder.bitmap);
+                } catch (java.io.IOException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                }
             }
 
             return viewHolder;
@@ -87,4 +105,15 @@ public class ImageAdapter extends ArrayAdapter<String> {
             }
         }
     }
+
+    private void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            bitmapLruCache.put(key, bitmap);
+        }
+    }
+
+    private Bitmap getBitmapFromMemCache(String key) {
+        return bitmapLruCache.get(key);
+    }
+
 }
