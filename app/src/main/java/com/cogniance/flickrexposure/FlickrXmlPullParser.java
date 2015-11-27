@@ -42,6 +42,16 @@ public class FlickrXmlPullParser {
         String dateUploadAttributValue;
         String ownerNameAttributValue;
 
+        final String PHOTO = "photo";
+        final String ID = "id";
+        final String SECRET = "secret";
+        final String SERVER = "server";
+        final String FARM = "farm";
+        final String TITLE = "title";
+        final String DATE_UPLOAD = "dateupload";
+        final String OWNER_NAME= "ownername";
+        final String EMPTY_STRING = "";
+
         try {
             factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -51,16 +61,16 @@ public class FlickrXmlPullParser {
 
             int i = 0;
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
-                if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("photo")) {
+                if (parser.getEventType() == XmlPullParser.START_TAG && PHOTO.equals(parser.getName())) {
                     parser.getNamespace();
-                    idAttributeValue = parser.getAttributeValue("", "id");
-                    secretAttributValue = parser.getAttributeValue("", "secret");
-                    serverAttributValue = parser.getAttributeValue("", "server");
-                    farmAttributValue = parser.getAttributeValue("", "farm");
-                    titleAttributValue = parser.getAttributeValue("", "title");
+                    idAttributeValue = parser.getAttributeValue(EMPTY_STRING, ID);
+                    secretAttributValue = parser.getAttributeValue(EMPTY_STRING, SECRET);
+                    serverAttributValue = parser.getAttributeValue(EMPTY_STRING, SERVER);
+                    farmAttributValue = parser.getAttributeValue(EMPTY_STRING, FARM);
+                    titleAttributValue = parser.getAttributeValue(EMPTY_STRING, TITLE);
 
-                    dateUploadAttributValue = parser.getAttributeValue("", "dateupload");
-                    ownerNameAttributValue = parser.getAttributeValue("", "ownername");
+                    dateUploadAttributValue = parser.getAttributeValue(EMPTY_STRING, DATE_UPLOAD);
+                    ownerNameAttributValue = parser.getAttributeValue(EMPTY_STRING, OWNER_NAME);
 
                     //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[size_suffixe_letter].jpg
                     imageURLArray.add("https://farm" + farmAttributValue + ".staticflickr.com/" + serverAttributValue + "/" + idAttributeValue + "_" + secretAttributValue + "_q.jpg");

@@ -2,14 +2,11 @@ package com.cogniance.flickrexposure;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -33,11 +30,6 @@ public class DisplayImageActivity extends Activity {
         ImageLoadThread imageLoadThread = new ImageLoadThread();
         imageLoadThread.start();
     }
-
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//    }
 
     private class ImageLoadThread extends Thread {
 
